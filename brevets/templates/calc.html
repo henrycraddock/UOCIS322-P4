@@ -24,7 +24,7 @@
          crossorigin="anonymous"></script>
       <!-- moment.js is the JavaScript equivalent of arrow.py -->
       <script
-      src="{{ url_for('static', filename="js/moment.min.js") }}"></script>
+      src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
    </head>
    <!-- Our own stylesheet -->
    <link rel="stylesheet" href="/static/css/calc.css" />
@@ -115,16 +115,14 @@
             var SCRIPT_ROOT = {{ request.script_root|tojson|safe }} ;
             var TIME_CALC_URL = SCRIPT_ROOT + "/_calc_times";
 
-            // FIX ME!
-            // Right now, only the kilometers are passed
-            // you need to pass much more!
-            // View flask_brevets.py for details.
             function calc_times(control) {
+              var brevet_dist = $("#brevet_dist_km").val();
+              var begin_date = $("#begin_date").val();
               var km = control.find("input[name='km']").val();
               var open_time_field = control.find("input[name='open']");
               var close_time_field = control.find("input[name='close']");
 
-              $.getJSON(TIME_CALC_URL, {km: km}).done(
+              $.getJSON(TIME_CALC_URL, {km: km, dist: brevet_dist, date: begin_date}).done(
                 function(data) {
                    var times = data.result;
                    console.log("Got a response: ");
