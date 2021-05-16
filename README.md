@@ -36,6 +36,10 @@ Additionally, the accepted brevet distances of 200, 300, 400, 600, and 1000 km a
 closing times for the entire brevet, even if those times do not correspond exactly to what would 
 be calculated using the algorithm.
 
+Control times within the first 60 km are subject to different calculations. The closing times are 
+determined by a speed of 20 km/hr plus an additional hour. The additional hour is due to the fact 
+that the 0 km control of the entire brevet closes an hour after it opens, regardless.
+
 ### Credits
 
 Michal Young, Ram Durairajan, Steven Walton, Joe Istas.
