@@ -5,7 +5,6 @@ following rules described at https://rusa.org/octime_alg.html
 and https://rusa.org/pages/rulesForRiders
 """
 import arrow
-import math
 
 # Global dicts for min and max speeds
 MIN_SPEEDS = {200: 15, 400: 15, 600: 15, 1000: 11.428}
@@ -37,11 +36,15 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
     hrs = 0
     mins = 0
     time_open = brevet_start_time
-    control_dist_km = math.trunc(control_dist_km)
+    control_dist_km = round(control_dist_km)
 
     # Check if control distance is suitable for the brevet
-    if brevet_dist_km < control_dist_km < brevet_dist_km * 1.2:
+    if brevet_dist_km < control_dist_km <= brevet_dist_km * 1.2:
         control_dist_km = brevet_dist_km
+    elif control_dist_km > brevet_dist_km * 1.2:
+        raise ValueError
+    elif control_dist_km < 0:
+        raise ValueError
 
     # Perform checks on control distance to determine proper times
     if 600 < control_dist_km <= 1000:
@@ -66,6 +69,9 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
         km_200 = convert_to_time(control_dist_km, MAX_SPEEDS[200])
         hrs = km_200[0]
         mins = km_200[1]
+    elif control_dist_km == 0:
+        hrs = 0
+        mins = 0
 
     time_open = time_open.shift(hours=hrs, minutes=mins)
     return time_open
@@ -87,11 +93,15 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
     hrs = 0
     mins = 0
     time_close = brevet_start_time
-    control_dist_km = math.trunc(control_dist_km)
+    control_dist_km = round(control_dist_km)
 
     # Check if control distance is suitable for the brevet
-    if brevet_dist_km < control_dist_km < brevet_dist_km * 1.2:
+    if brevet_dist_km < control_dist_km <= brevet_dist_km * 1.2:
         control_dist_km = brevet_dist_km
+    elif control_dist_km > brevet_dist_km * 1.2:
+        raise ValueError
+    elif control_dist_km < 0:
+        raise ValueError
 
     # Perform checks on control distance to determine proper times
     # This first check is to determine if the current control is the final control,
@@ -120,10 +130,18 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
             hrs = km_600[0] + km_1000[0]
             mins = km_600[1] + km_1000[1]
         # The 200, 400, and 600 km ranges can be put into one check since they have the same minimum speed
-        elif 0 < control_dist_km <= 600:
+        elif 60 < control_dist_km <= 600:
             km_600 = convert_to_time(control_dist_km, MIN_SPEEDS[600])
             hrs = km_600[0]
             mins = km_600[1]
+        # The following is for the French variation of controls under 60 km
+        elif 0 < control_dist_km <= 60:
+            km_60 = convert_to_time(control_dist_km, 20)
+            hrs = km_60[0] + 1
+            mins = km_60[1]
+        elif control_dist_km == 0:
+            hrs = 1
+            mins = 0
 
     time_close = time_close.shift(hours=hrs, minutes=mins)
     return time_close
