@@ -5,6 +5,7 @@ following rules described at https://rusa.org/octime_alg.html
 and https://rusa.org/pages/rulesForRiders
 """
 import arrow
+import math
 
 # Global dicts for min and max speeds
 MIN_SPEEDS = {200: 15, 400: 15, 600: 15, 1000: 11.428}
@@ -16,7 +17,13 @@ def convert_to_time(dist, speed):
     dec = str(dist / speed)
     dec = dec.split('.')
     hour = int(dec[0])
-    min = int(round(float('.' + dec[1]) * 60))
+    min = str(float('.' + dec[1]) * 60)
+    rem = min.split('.')
+    if float('.' + rem[1]) > 0.5:
+        min = int(math.ceil(float(min)))
+    else:
+        min = int(math.floor(float(min)))
+    #min = int(round(float('.' + dec[1]) * 60))
     return [hour, min]
 
 
